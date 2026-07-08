@@ -1,0 +1,28 @@
+name: Daily Docs Sync Job
+
+on:
+  schedule:
+    # Triggers execution once every single day at midnight (00:00 UTC)
+    - cron: "0 0 * * *"
+  workflow_dispatch: # Allows manual trigger button for tester evaluation
+
+jobs:
+  run-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository layout code
+        uses: actions/checkout@v4
+
+      - name: Setup environment workspace runtime Python
+        uses: actions/local/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install localized dependencies components
+        run: |
+          pip install requests markdownify google-genai python-dotenv
+
+      - name: Run Delta Scraper Pipeline Engine
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python main.py

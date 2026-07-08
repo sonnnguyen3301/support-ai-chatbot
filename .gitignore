@@ -1,0 +1,15 @@
+# Environment variables (Security)
+.env
+
+# Python Virtual Environments
+venv/
+.venv/
+env/
+
+# Locally generated data and states
+markdown_docs/
+sync_state.json
+
+# Python cache files
+__pycache__/
+*.pyc
