@@ -32,6 +32,21 @@ docker run --rm -e OPENAI_API_KEY="sk-proj-..." support-ai-sync
 
 ## ☁️ Production Deployment & Monitoring
 
-- **Deployment Platform:** Deployed as an automated daily serverless **Cron Job** on Render using the compiled Dockerfile.
-- **Schedule Execution:** Configured to trigger once per day.
-- **Production Execution Run Logs:** [Dán link trang dashboard/logs Render của bạn vào đây]
+- **Deployment Platform:** Deployed as an automated serverless **Cron Job** on **Railway** using the compiled production `Dockerfile`.
+- **Schedule Execution:** Configured to trigger daily at 01:00 UTC (**08:00 AM ICT / Vietnam Time**) (`0 1 * * *`).
+- **Production Execution Run Logs:** [Dán_Link_Trang_Log_Railway_Của_Bạn_Vào_Đây]
+
+---
+
+## 🔄 Delta Sync & Chunking Strategy
+
+Instead of relying on volatile local file storage (`sync_state.json`) which is wiped out across stateless serverless cloud container lifecycles, this pipeline implements a robust **Remote State Validation Strategy**:
+
+1. **Remote Inventory Scanning:** Every boot sequence fetches the active file inventory directly from the **OpenAI Vector Store API**.
+2. **Deterministic Metadata Hashing:** Document naming conventions are strict and deterministic: `{Zendesk_Article_ID}-v-{Unix_Updated_Timestamp}-{Slug}.md`.
+3. **Delta Matrix Computation:**
+   - **ADDED:** If the Article ID does not exist in the remote OpenAI store, it is treated as a new document and injected into the pipeline.
+   - **UPDATED:** If the Article ID exists but the embedded `Unix_Updated_Timestamp` differs from the fresh Zendesk payload, the stale cloud file is cleanly purged via API and replaced with the updated content.
+   - **SKIPPED:** If both the ID and timestamp match identically, the document is safely bypassed within milliseconds, saving API costs and network overhead.
+
+This architectural choice guarantees **100% stateless compliance**, data persistence, and sub-second delta evaluations on production cloud networks.
