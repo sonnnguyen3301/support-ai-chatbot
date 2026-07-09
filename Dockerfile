@@ -1,14 +1,15 @@
-# Use a lightweight, standardized production Python runtime environment
+# Use official lightweight Python image
 FROM python:3.11-slim
 
-# Set internal operational directory inside the running container
+# Set working directory inside the container
 WORKDIR /app
 
-# Install dependencies clean without saving unnecessary local setup caches
-RUN pip install --no-cache-dir requests markdownify google-genai python-dotenv
+# Copy dependencies and install them
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all remaining script files into the workspace environment container
+# Copy the entire source code into the container
 COPY . .
 
-# Explicit execution endpoint when 'docker run' triggers
+# Default execution command triggered by 'docker run'
 CMD ["python", "main.py"]
