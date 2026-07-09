@@ -120,7 +120,9 @@ def main():
             print(f"Uploading delta file: {os.path.basename(file_path)}")
             try:
                 # API upload behavior strictly executed as requested
-                client.files.upload(file=file_path)
+                uploaded_file= client.files.upload(file=file_path,config={'mime_type': 'text/markdown'})
+
+                print(f" -> Successfully uploaded! (ID: {uploaded_file.name})")
             except Exception as e:
                 print(f"Failed uploading {file_path} to Gemini API: {e}")
     else:
