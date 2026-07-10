@@ -19,7 +19,7 @@ The application is fully dockerized, executes as a single transaction job, and g
 ### Prerequisites
 Ensure your local environment includes a configured `.env` file mapping:
 ```text
-OPENAI_API_KEY=your_secret_api_key_here
+API_KEY=your_secret_api_key_here
 
 #Execution Commands
 
@@ -27,7 +27,7 @@ OPENAI_API_KEY=your_secret_api_key_here
 docker build -t support-ai-sync .
 
 ## Run the sync operation sequentially 
-docker run --rm -e OPENAI_API_KEY="sk-proj-..." support-ai-sync
+docker run --rm -e API_KEY="sk-proj-..." support-ai-sync
 
 
 ## ☁️ Production Deployment & Monitoring

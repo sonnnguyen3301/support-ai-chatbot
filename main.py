@@ -255,9 +255,9 @@ def main():
     sys.stdout = dual_output
 
     try:
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("API_KEY")
         if not api_key:
-            print("CRITICAL ERROR: Environment variable 'OPENAI_API_KEY' is missing.")
+            print("CRITICAL ERROR: Environment variable 'API_KEY' is missing.")
             return
 
         client = OpenAI(api_key=api_key)
