@@ -87,10 +87,10 @@ _(Each file contains the exact Delta Sync counts: Added, Updated, and Skipped)._
 
 ### 1. Cloud Cron Job (Railway)
 
-![Deployment Status Dashboard](static\Deploy_build.png)
+![Deployment Status Dashboard](static/Deploy_build.png)
 
-![Execution Logs](static\Deploy_logs.png)
+![Execution Logs](static/Deploy_logs.png)
 
 ### 2. Assistant Sanity Check
 
-![Assistant Sanity Check](static\How_do_i_add_a_youtube_video.png)
+![Assistant Sanity Check](static/How_do_i_add_a_youtube_video.png)
