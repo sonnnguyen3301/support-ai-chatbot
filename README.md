@@ -1,51 +1,91 @@
-# KB Sync Pipeline & AI Assistant
+# Support Knowledge Automation Pipeline
 
-An automated ETL pipeline that scrapes support articles, converts them to Markdown, executes incremental delta updates, and programmatically populates an OpenAI Vector Store for a production RAG Assistant.
-
----
-
-## 🛠️ System Overview & Architecture
-
-- **Stage 1 (Scrape):** Pulls raw JSON data directly via Zendesk Help Center API to bypass navigation elements and ads. Normalizes HTML content into semantic, ATX-style Markdown using `markdownify`.
-- **Stage 2 (Delta Engine):** Tracks modification timestamps directly against the remote OpenAI Vector Store file database using embedded filename tags. Automatically classifies updates into `ADDED`, `UPDATED`, or `SKIPPED`. Stale data versions on OpenAI are programmatically deleted prior to replacing them with new delta files to ensure zero asset duplication.
-- **Stage 3 (Chunking & Embedding):** Utilizes OpenAI's native Vector Store API via the File Batches endpoints. Text parsing, layout splitting, and markdown structural boundaries are managed under-the-hood natively by OpenAI, ensuring zero chunking drift.
-- **Stage 4 (Automated Cloud Logging):** Captures runtime logs in-memory using an interception layer. Upon cloud execution termination, the buffer is base64-encoded and committed directly via the GitHub Contents API to the repository's `logs/` directory as public artifacts (automatically bypassed during basic local runs).
+This project is an automated data-sync system designed to maintain an AI-powered Support Assistant (**OptiBot**). It fetches customer support documentation via Zendesk APIs, normalizes rich HTML text into semantic Markdown, and programmatically updates an OpenAI Vector Store.
 
 ---
 
-## 💻 Local Execution (Docker)
+## 📋 Features
 
-The application is fully dockerized, executes as a single transaction job, and gracefully exits with status `0`.
+- **Delta Scraping Engine:** Detects updates via Zendesk timestamps to ensure only modified articles are re-uploaded.
+- **Stateful Remote Logging:** Execution logs are dynamically intercepted and pushed to the repository via GitHub API.
+- **Automated AI Assistant Provisioning:** Configures OpenAI Assistants (GPT-4o-mini) and connects File Search resources programmatically.
 
-### Prerequisites
-Create a `.env` file in your root directory based on the provided `.env.example`. For local evaluation, only the OpenAI key is strictly required:
-```text
-API_KEY=your_secret_api_key_here
+---
 
-#Execution Commands
+## 🛠️ Chunking Strategy
 
-## Build the production container image
-docker build -t support-ai-sync .
+To maintain semantic data structures, we feed the raw converted Markdown files directly into OpenAI's **File Search tool**:
 
-## Run the sync operation sequentially using only the required OpenAI API Key
-docker run --rm -e API_KEY="sk-proj-..." support-ai-sync
+- **Chunk Size:** OpenAI handles splitting at 800 tokens per chunk.
+- **Context Preservation:** Markdown headers (`#`, `##`, `###`) are intentionally preserved during the scraping phase, allowing the vector embedding model to easily detect logical boundaries and contextual relationships.
 
-#☁️ Production Deployment & Monitoring
-Deployment Platform: Deployed as an automated serverless Cron Job on Railway using the compiled production Dockerfile.
+---
 
-Schedule Execution: Configured to trigger daily at 01:00 UTC (08:00 AM ICT / Vietnam Time) (0 1 * * *).
+## 🚀 Local Installation & Setup
 
-Production Execution Run Logs: To guarantee long-term data persistence across serverless cloud boundaries, every automated pipeline execution generates a unique timestamped run trace artifact. You can inspect the historical live cloud execution logs directly within the repository: https://github.com/sonnnguyen3301/support-ai-chatbot/tree/main/logs
+### 1. Prerequisites
 
-#🔄 Delta Sync & Chunking Strategy
-Instead of relying on volatile local file storage (sync_state.json) which is wiped out across stateless serverless cloud container lifecycles, this pipeline implements a robust Remote State Validation Strategy:
+Ensure you have Python 3.11+ installed.
 
-- Remote Inventory Scanning: Every boot sequence fetches the active file inventory directly from the OpenAI Vector Store API.
+### 2. Install Dependencies
 
-- Deterministic Metadata Hashing: Document naming conventions are strict and deterministic: {Zendesk_Article_ID}-v-{Unix_Updated_Timestamp}-{Slug}.md.
+pip install -r requirements.txt
 
-- Delta Matrix Computation:
-   - ADDED: If the Article ID does not exist in the remote OpenAI store, it is treated as a new document and injected into the pipeline.
-   - UPDATED: If the Article ID exists but the embedded Unix_Updated_Timestamp differs from the fresh Zendesk payload, the stale cloud file is cleanly purged via API and replaced with the updated content.
-   - SKIPPED: If both the ID and timestamp match identically, the document is safely bypassed within milliseconds, saving API costs and network overhead.
-This architectural choice guarantees 100% stateless compliance, data persistence, and sub-second delta evaluations on production cloud networks.
+### 3. Environment Setup
+
+Create a .env file in the root directory based on your .env-example:
+
+API_KEY=sk-proj-your-openai-api-key
+
+Optional for logs saving:
+GITHUB_TOKEN=your-github-personal-access-token
+GITHUB_REPO=username/your-cryptic-repo-name
+
+### 4. Execute Pipeline
+
+```
+python main.py
+```
+
+# 🐳 Docker Containerization
+
+To package and run the engine locally inside an isolated runtime environment:
+
+# 1. Build the image
+
+```
+docker build -t optisigns-sync-job .
+```
+
+# 2. Run the container once (it will execute main.py and exit 0)
+
+```
+docker run -e API_KEY="sk-proj-your-openai-api-key" optisigns-sync-job
+```
+
+## ☁️ Cloud Deployment (Railway)
+
+This sync job is successfully containerized and deployed on **Railway** as a Daily Cron Job.
+
+- **Schedule:** Runs automatically once per day (`0 1 * * *`).
+- **Mechanism:** Railway builds the application via the provided `Dockerfile` and injects `API_KEY` and GitHub credentials via platform environment variables.
+- **Logs:** Runtime artifacts are securely pushed back to the `logs/` directory of this repository via the GitHub REST API.
+
+## 📊 Artifacts & Daily Logs
+
+The cron job automatically commits its execution summary directly to this repository.
+
+- **View Job Logs (Artifacts):** [Click here to view the /logs directory](https://github.com/sonnnguyen3301/support-ai-chatbot/tree/main/logs)
+
+_(Each file contains the exact Delta Sync counts: Added, Updated, and Skipped)._
+
+## 📸 Proof of Execution
+
+### 1. Cloud Cron Job (Railway)
+
+Chatbot_vector_response.png
+![Railway Execution](railway-log.png)
+
+### 2. Assistant Sanity Check
+
+`![Assistant Sanity Check](How_do_i_add_a_youtube_video.png)

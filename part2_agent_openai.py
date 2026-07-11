@@ -25,7 +25,6 @@ def main():
 
     print(f"Found {len(file_paths)} Markdown files. Initializing OpenAI Vector Store...")
 
-    # KHÔNG DÙNG .beta ở vector_stores (đã chạy thành công ở lần trước)
     vector_store = client.vector_stores.create(
         name="OptiSigns Knowledge Base"
     )

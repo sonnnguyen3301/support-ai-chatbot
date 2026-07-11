@@ -2,8 +2,8 @@ name: Daily Docs Sync Job
 
 on:
   schedule:
-    # Triggers execution once every single day at midnight (00:00 UTC)
-    - cron: "0 0 * * *"
+    # Triggers execution once every single day at midnight (08:00 UTC VietNam time)
+    - cron: "0 1 * * *"
   workflow_dispatch: # Allows manual trigger button for tester evaluation
 
 jobs:

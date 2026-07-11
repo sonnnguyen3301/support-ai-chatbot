@@ -147,7 +147,7 @@ def get_or_create_resources(client):
         assistant = client.beta.assistants.create(
             name=ASSISTANT_NAME,
             instructions=SYSTEM_PROMPT,
-            model="gpt-4o-mini",
+            model="gpt-4o",
             tools=[{"type": "file_search"}],
             tool_resources={"file_search": {"vector_store_ids": [vector_store_id]}}
         )
