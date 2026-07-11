@@ -8,7 +8,7 @@ This project is an automated data-sync system designed to maintain an AI-powered
 
 - **Delta Scraping Engine:** Detects updates via Zendesk timestamps to ensure only modified articles are re-uploaded.
 - **Stateful Remote Logging:** Execution logs are dynamically intercepted and pushed to the repository via GitHub API.
-- **Automated AI Assistant Provisioning:** Configures OpenAI Assistants (GPT-4o-mini) and connects File Search resources programmatically.
+- **Automated AI Assistant Provisioning:** Configures OpenAI Assistants (GPT-4o) and connects File Search resources programmatically.
 
 ---
 
@@ -29,13 +29,17 @@ Ensure you have Python 3.11+ installed.
 
 ### 2. Install Dependencies
 
+```
 pip install -r requirements.txt
+```
 
 ### 3. Environment Setup
 
 Create a .env file in the root directory based on your .env-example:
 
+```
 API_KEY=sk-proj-your-openai-api-key
+```
 
 Optional for logs saving:
 GITHUB_TOKEN=your-github-personal-access-token
@@ -83,9 +87,10 @@ _(Each file contains the exact Delta Sync counts: Added, Updated, and Skipped)._
 
 ### 1. Cloud Cron Job (Railway)
 
-Chatbot_vector_response.png
-![Railway Execution](railway-log.png)
+![Deployment Status Dashboard](static\Deploy_build.png)
+
+![Execution Logs](static\Deploy_logs.png)
 
 ### 2. Assistant Sanity Check
 
-`![Assistant Sanity Check](How_do_i_add_a_youtube_video.png)
+![Assistant Sanity Check](static\How_do_i_add_a_youtube_video.png)

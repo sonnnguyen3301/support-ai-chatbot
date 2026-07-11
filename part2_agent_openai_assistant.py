@@ -57,7 +57,7 @@ def main():
     assistant = client.beta.assistants.create(
         name="OptiBot Assistant",
         instructions=system_instructions,
-        model="gpt-4o-mini", 
+        model="gpt-4o", 
         tools=[{"type": "file_search"}], 
         tool_resources={
             "file_search": {
